@@ -75,13 +75,17 @@ if config['event_id_combine']:
     for ids, to in zip(event_id_combine, event_to):
         events = mne.merge_events(events, ids=ids, new_id=to)
 
-event_id_condition = config['event_id_condition'].replace('\n', '')
-event_id = eval('{' + event_id_condition + '}')
+if config['event_id_condition']:
+    event_id_condition = config['event_id_condition'].replace('\n', '')
+    event_id = eval('{' + event_id_condition + '}')
 
-id_list = list(event_id.values())
-# keep only those events named in event_id_condition that are present in raw
-id_list = [id for id in id_list if id in events[:, 2]]
-event_id = {key: val for key, val in event_id.items() if val in id_list}
+    id_list = list(event_id.values())
+    # keep only those events named in event_id_condition that are present in raw
+    id_list = [id for id in id_list if id in events[:, 2]]
+    event_id = {key: val for key, val in event_id.items() if val in id_list}
+else:
+    event_id = None
+    id_list = None
 
 events = mne.pick_events(events, include=id_list)
 
@@ -95,7 +99,7 @@ report.save('out_report/report.html', overwrite=True)
 
 # == CREATE PRODUCT ==
 product_items = []
-add_info_to_product(product_items, f'Found {len(events)} events across {len(event_id)} conditions')
+add_info_to_product(product_items, f'Found {len(events)} events')
 fig = mne.viz.plot_events(events, sfreq=sfreq, event_id=event_id, show=False)
 fig.savefig('out_dir/events_plot.png')
 add_image_to_product(product_items, 'Events', filepath='out_dir/events_plot.png')
