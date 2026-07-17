@@ -95,7 +95,7 @@ _events_tsv(events, np.repeat(0., events.shape[0]), raw, 'out_dir/events.tsv', t
 # == GENERATE REPORT ==
 report = mne.Report(title='Events')
 report.add_events(events=events, title='Events', sfreq=sfreq, event_id=event_id)
-report.save('out_report/report.html', overwrite=True)
+report.save('out_report/report.html', overwrite=True, verbose=False)
 
 # == CREATE PRODUCT ==
 product_items = []
