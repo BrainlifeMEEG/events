@@ -10,6 +10,7 @@ Inputs:
 
 Outputs:
     - out_dir/events.tsv: BIDS-compatible events file
+    - out_figs/events_plot.png: Events visualization
     - out_report/report.html: MNE report with event visualization
     - product.json: Metadata for Brainlife.io interface
 """
@@ -42,7 +43,7 @@ from brainlife_utils import (
 
 setup_matplotlib_backend()
 
-ensure_output_dirs('out_dir', 'out_report')
+ensure_output_dirs('out_dir', 'out_figs', 'out_report')
 
 config = load_config()
 
@@ -101,6 +102,6 @@ report.save('out_report/report.html', overwrite=True, verbose=False)
 product_items = []
 add_info_to_product(product_items, f'Found {len(events)} events')
 fig = mne.viz.plot_events(events, sfreq=sfreq, event_id=event_id, show=False)
-fig.savefig('out_dir/events_plot.png')
-add_image_to_product(product_items, 'Events', filepath='out_dir/events_plot.png')
+fig.savefig('out_figs/events_plot.png')
+add_image_to_product(product_items, 'Events', filepath='out_figs/events_plot.png')
 create_product_json(product_items)
