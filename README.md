@@ -41,7 +41,7 @@ The app generates:
 | `initial_event` | boolean | `false` | If `true`, create an event at the first sample when the stim channel is non-zero there, passed to `mne.find_events(initial_event=...)`. |
 | `include` | int \| list of int \| null | `null` | Event ID(s) to keep, passed to `mne.pick_events(include=...)`. `null`/empty keeps all events; takes precedence over `exclude` when both are set. |
 | `exclude` | int \| list of int \| null | `null` | Event ID(s) to drop, passed to `mne.pick_events(exclude=...)`. Ignored when `include` is set. |
-| `event_id_combine` | string | `""` | Rules for merging event IDs with `mne.merge_events()`, one rule per line: comma-separated source IDs followed by the destination ID, e.g. `"1,2,3 -> 100"`. |
+| `event_id_combine` | string | `""` | Rules for merging event IDs with `mne.merge_events()`, one rule per line: comma- or colon-separated source IDs followed by the destination ID, e.g. `"1,2,3:100"` merges events `1`, `2`, `3` into new ID `100`. |
 | `event_id_condition` | string | `""` | Mapping from condition names to event IDs, e.g. `"'face': 5, 'scrambled': 17"`, used to label the output report/figure and restrict events to those IDs. |
 
 ## Usage
