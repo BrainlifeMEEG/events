@@ -1,5 +1,59 @@
 # Extract Events from MEG/EEG Data
 
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+> **Detects events on the stimulus channel of raw MEG/EEG data with MNE-Python find_events, optionally picks and merges event IDs, and outputs a BIDS events.tsv, an events plot and an HTML report.**
+
+Runs mne.find_events with the given detection options, restricts events with mne.pick_events (include/exclude), merges IDs with mne.merge_events (event_id_combine) and labels conditions (event_id_condition). Use it to create the events file needed for epoching when events are coded on a trigger channel. It needs raw .fif data with a stimulus channel.
+
+| | |
+|---|---|
+| 📥 **Inputs** | `neuro/meeg/mne/raw` |
+| 📤 **Outputs** | `report/html` · `neuro/meg/fif-override` |
+| 🐳 **Container** | `brainlifemeeg/mne:1.12.1` |
+| ⚙️ **Resources** | 8 CPUs · 32 GB memory · 2 h walltime |
+| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.666](https://doi.org/10.25663/brainlife.app.666) |
+
+#### 📥 Inputs
+
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `fif` | `neuro/meeg/mne/raw` | yes | Continuous MEG/EEG data in MNE raw .fif format containing a stimulus (trigger) channel. |
+
+#### 📤 Outputs
+
+| Output | Datatype | Description |
+|---|---|---|
+| `out_dir_report` | `report/html` | MNE HTML report visualizing the detected events. |
+| `out_dir` | `neuro/meg/fif-override` | BIDS-compatible events.tsv with the detected (and merged) events. |
+
+<details>
+<summary><b>⚙️ Parameters</b> (13)</summary>
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `stim_channel` | string |  | Name of the stim channel or all the stim channels affected by triggers. If None, the config variables ‘MNE_STIM_CHANNEL’, ‘MNE_STIM_CHANNEL_1’, ‘MNE_STIM_CHANNEL_2’, etc. are read. If these are not found, it will fall back to ‘STI 014’ if present, then fall back to the first channel of type ‘stim’, if present. If multiple channels are provided then the returned events are the union of all the events extracted from individual stim channels. |
+| `event_id_combine` | string |  | Events to be combined. Several IDs separated by commas, followed by ":" and the new ID or condition name of the merged events. 1,2 : 1 3,4 : 2 Note: These values need to be integers. This triggers repeated calls to mne.merge_events in the order provided. |
+| `event_id_condition` | string |  | dict \| None Descriptions or names describing the event codes, if you passed events. The descriptions will be written to the trial_type column in *_events.tsv. The dictionary keys correspond to the event description,s and the values to the event codes. You must specify a description for all event codes appearing in events. If your data contains Annotations, you can use this parameter to assign event codes to each unique annotation description (mapping from description to event code). Note: this is run after combining events listed in (event_id_combine). |
+| `consecutive` | string | `increasing` | If True, consider instances where the value of the events channel changes without first returning to zero as multiple events. If False, report only instances where the value of the events channel changes from/to zero. If ‘increasing’, report adjacent events only when the second event code is greater than the first. |
+| `mask` | number |  | The value of the digital mask to apply to the stim channel values. If None (default), no masking is performed. |
+| `uint_cast` | boolean | `false` | If True (default False), do a cast to uint16 on the channel data. This can be used to fix a bug with STI101 and STI014 in Neuromag acquisition setups that use channel STI016 (channel 16 turns data into e.g. -32768), similar to mne_fix_stim14 --32 in MNE-C. |
+| `mask_type` | string | `and` | The type of operation between the mask and the trigger. Choose ‘and’ (default) for MNE-C masking behavior. |
+| `initial_event` | boolean | `false` | If True (default False), an event is created if the stim channel has a value different from 0 as its first sample. This is useful if an event at t=0s is present. |
+| `min_duration` | number | `0.005` | The minimum duration of a change in the events channel required to consider it as an event (in seconds). |
+| `include` | string |  | A event id to include or a list of them. If None all events are included. |
+| `exclude` | string |  | A event id to exclude or a list of them. If None no event is excluded. If include is not None the exclude parameter is ignored. |
+| `shortest_event` | number | `2` | int Minimum number of samples an event must last (default is 2). If the duration is less than this an exception will be raised. |
+| `output` | string | `onset` | ‘onset’ \| ‘offset’ \| ‘step’ Whether to report when events start, when events end, or both. |
+
+</details>
+
+📚 **References used by this App:**
+- Hayashi S, Caron BA, Heinsfeld AS, et al. brainlife.io: a decentralized and open-source cloud platform to support neuroscience research. Nat Methods 21:809-813 (2024). [doi:10.1038/s41592-024-02237-2](https://doi.org/10.1038/s41592-024-02237-2)
+- Gramfort A, et al. MEG and EEG data analysis with MNE-Python. Front Neurosci 7:267 (2013). [doi:10.3389/fnins.2013.00267](https://doi.org/10.3389/fnins.2013.00267)
+
+<!-- brainlife-app:end -->
+
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.666-blue.svg)](https://doi.org/10.25663/brainlife.app.666)
 
 ## Description
